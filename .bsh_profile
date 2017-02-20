@@ -1,0 +1,2 @@
+export STRIPESECRET=$(sk_test_RYwXnaKvXMC0NEmMMm3SUCAb)
+export STRIPEPUBKEY=$(pk_test_qyiJIlc2jm7QuNumP3BWqzoE)
