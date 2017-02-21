@@ -11,7 +11,7 @@ class StripePoc
 	  charge = Stripe::Charge.create(
 	    :customer    => customer.id,
 	    :amount      => @amount,
-	    :description => 'Rails Stripe customer',
+	    :description => 'Rails Stripe POC',
 	    :currency    => 'usd'
 	  )
 
@@ -21,9 +21,42 @@ class StripePoc
 	  #redirect_to new_charge_path
 	end
 
+	def subscribe(stripeEmail, stripeToken)
+	  # Amount in cents
+	  @amount = 500
 
-	def calCreate
+	  customer = Stripe::Customer.create(
+	    :email => stripeEmail,
+	    :source  => stripeToken
+	  )
+
+	  charge = Stripe::Subscription.create(
+	    :customer    => customer.id,
+	    :plan      => 'premium1'
+	  )
+
+	rescue Stripe::CardError => e
+		puts e.messages
+	  #flash[:error] = e.message
+	  #redirect_to new_charge_path
+	end
+
+	def charge
 		#generate stripe token
+		token = self.createToken
+		#create a customer and charge
+		self.create("padhus#{Time.now.to_i}@gmail.com", token)
+	end
+
+	def subCustomer
+		#generate stripe token
+		token = self.createToken
+		#create a customer and subscribe to premium plan
+		self.subscribe("padhus#{Time.now.to_i}@gmail.com", token)
+
+	end
+
+	def createToken
 		token =	Stripe::Token.create(
 		  :card => {
 		    :number => "4242424242424242",
@@ -32,6 +65,5 @@ class StripePoc
 		    :cvc => "314"
 		  },
 		)
-		self.create('padhu@gmail.com', token)
 	end
 end
